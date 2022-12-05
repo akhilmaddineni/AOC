@@ -9,7 +9,7 @@ with open("input_p1.txt",'r') as f :
     input_stack = []
     for i in range(len(raw_input[0])//4): 
         input_stack.append(deque())
-    print(raw_input[:4])
+    #print(raw_input[:4])
     for i in range(len(raw_input)) : 
         if raw_input[i+1] != ' ' : 
             stack_idx = 0
@@ -21,8 +21,8 @@ with open("input_p1.txt",'r') as f :
             break
         idx += 1
     idx+=2 #next move instructions set from this index 
-    print(input_stack)
-    print(raw_input)
+    #print(input_stack)
+    #print(raw_input)
     for i in range(idx,len(raw_input)) : 
         instruction_arr = raw_input[i].split()
         #index 1,3,5 are POI 
