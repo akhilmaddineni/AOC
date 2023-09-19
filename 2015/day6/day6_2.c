@@ -20,59 +20,6 @@ typedef struct bitfield
     uint32_t bitfield_arr[ARR_SIZE] ; 
 }bitfield;
 
-void turn_bits_on(bitfield field[] , coordinates left_top, coordinates right_bottom)
-{
-    int row_x1 = left_top.x ; 
-    int row_x2 = right_bottom.x ; 
-
-    int col_y1 = (int)(left_top.y/32);
-    int col_y2 = (int)(right_bottom.y/32); 
-
-    int col_y1_offset = (int)(left_top.y%32);
-    int col_y2_offset = (int)(right_bottom.y%32);
-
-    for(int i = row_x1; i<=row_x2; i++)
-    {
-        for(int j = col_y1 ; j<=col_y2 ; j++)
-        {   
-            if(col_y1 == j)
-            {
-                field[i].bitfield_arr[j] |= ~(0xFFFFFFFF << col_y1_offset) ;  
-            }
-            if(col_y2 == j)
-            {
-                field[i].bitfield_arr[j] |= (0xFFFFFFFF << col_y2_offset) ;  
-            }
-            if (col_y1 != j && col_y2 !=j)
-            {
-                field[i].bitfield_arr[j] |= 0xFFFFFFFF ;
-            }
-
-        }
-    }
-    return;
-}
-
-void turn_bits_off(bitfield field[] , coordinates left_top, coordinates right_bottom)
-{
-    return;
-}
-
-void toggle_bits(bitfield field[] , coordinates left_top, coordinates right_bottom)
-{
-    int row_x1 = left_top.x ; 
-    int row_x2 = right_bottom.x ; 
-
-    int col_y1 = (int)(left_top.y/32);
-    int col_y2 = (int)(right_bottom.y/32); 
-
-    int col_y1_offset = (int)(left_top.y%32);
-    int col_y2_offset = (int)(right_bottom.y%32);
-
-
-    return;
-}
-
 void toggle_arr(uint8_t arr[1000][1000],coordinates left_top,coordinates right_bottom)
 {
     printf("Toggle coordinates x1 = %d,y1 = %d - x2 = %d,y2 = %d\n",left_top.x,left_top.y,right_bottom.x,right_bottom.y);
@@ -80,7 +27,7 @@ void toggle_arr(uint8_t arr[1000][1000],coordinates left_top,coordinates right_b
     {
         for(int j= left_top.y; j<=right_bottom.y;j++)
         {
-            arr[i][j] ^= 1 ; 
+            arr[i][j] += 2 ; 
         }
     }
 
@@ -93,7 +40,7 @@ void turn_on_arr(uint8_t arr[1000][1000],coordinates left_top,coordinates right_
         for(int j= left_top.y; j<=right_bottom.y;j++)
         {
             //printf("%d\t%d\n",i,j);
-            arr[i][j] = 1 ; 
+            arr[i][j] += 1 ; 
         }
     }
 
@@ -106,7 +53,8 @@ void turn_off_arr(uint8_t arr[1000][1000],coordinates left_top,coordinates right
     {
         for(int j= left_top.y; j<=right_bottom.y;j++)
         {
-            arr[i][j] = 0 ; 
+            if(arr[i][j] > 0)
+            arr[i][j] -= 1 ; 
         }
     }
 
