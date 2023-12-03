@@ -60,7 +60,6 @@ fn solve_part2(input_lines: Vec<String>) {
             ("blue",0)
         ]);
         let divide_line: Vec<&str> = line.split(":").collect();
-        let game_num = divide_line[0].replace("Game ","").trim().parse::<u16>().unwrap();
         let game_info: Vec<&str> = divide_line[1].split(";").collect();
         for each_game in game_info {
             let cube_info: Vec<&str> = each_game.split(",").collect();
