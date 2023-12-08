@@ -1,5 +1,4 @@
 use std::fs;
-use std::collections::HashMap;
 fn read_input(filename: &str) -> String {
     fs::read_to_string(filename).expect("Error reading file")
 }
@@ -50,7 +49,7 @@ fn solve_part2_ranges(seed_map_vector: &Vec<Vec<((i64,i64),(i64,i64))>>, seeds_i
         // println!("input_layer_change_points : {:?}",input_layer_change_points);
         // println!("vector map : {:?}",seed_map_vector[each_map]);
         for process_layer_input in &seed_map_vector[each_map] {
-            let mut process_pending: Vec<(i64,i64)>  = input_layer_points.clone();
+            let process_pending: Vec<(i64,i64)>  = input_layer_points.clone();
             input_layer_points.clear(); 
             //println!("processing point : {:?}",process_layer_input);
             for input_point in &process_pending {
@@ -77,7 +76,7 @@ fn solve_part2_ranges(seed_map_vector: &Vec<Vec<((i64,i64),(i64,i64))>>, seeds_i
                         )
                 }
                 //sliding window left  
-                else if (process_layer_input.0.0 >= input_point.0 && process_layer_input.0.1 >= input_point.1 && process_layer_input.0.0 < input_point.1) {
+                else if process_layer_input.0.0 >= input_point.0 && process_layer_input.0.1 >= input_point.1 && process_layer_input.0.0 < input_point.1 {
                     //println!("window left {:?}",input_point);
                     input_layer_change_points.push(
                         (
@@ -88,7 +87,7 @@ fn solve_part2_ranges(seed_map_vector: &Vec<Vec<((i64,i64),(i64,i64))>>, seeds_i
                     input_layer_points.push((input_point.0,process_layer_input.0.0-1));
                 }
                 //sliding window right 
-                else if (process_layer_input.0.0 <= input_point.0 && process_layer_input.0.1 <= input_point.1 && process_layer_input.0.1 > input_point.0) {
+                else if process_layer_input.0.0 <= input_point.0 && process_layer_input.0.1 <= input_point.1 && process_layer_input.0.1 > input_point.0 {
                     //println!("window right {:?}",input_point);
                     input_layer_change_points.push(
                         (
@@ -99,7 +98,7 @@ fn solve_part2_ranges(seed_map_vector: &Vec<Vec<((i64,i64),(i64,i64))>>, seeds_i
                     input_layer_points.push((process_layer_input.0.1+1,input_point.1));
                 }
                 //input fully exceeds 
-                else if (process_layer_input.0.0 >= input_point.0 && process_layer_input.0.1 <= input_point.1) {
+                else if process_layer_input.0.0 >= input_point.0 && process_layer_input.0.1 <= input_point.1 {
                     //println!("fully exceed {:?}",input_point);
                     input_layer_change_points.push((process_layer_input.1.0,process_layer_input.1.1));
                     input_layer_points.push((input_point.0,process_layer_input.0.0-1));
