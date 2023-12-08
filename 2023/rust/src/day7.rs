@@ -12,13 +12,13 @@ fn parse_lines_to_vec(input: &str) -> Vec<String> {
 
 #[repr(C)] //ctype enum 
 enum card_rank {
-    HIGH_CARD,
-    ONE_PAIR,
-    TWO_PAIR,
-    THREE_KIND,
-    FULL_HOUSE,
-    FOUR_KIND,
-    FIVE_KIND,
+    HighCard,
+    OnePair,
+    TwoPair,
+    ThreeKind,
+    FullHouse,
+    FourKind,
+    FiveKind,
 }
 
 fn find_rank(card_info: &str) -> card_rank {
@@ -28,39 +28,105 @@ fn find_rank(card_info: &str) -> card_rank {
         *count += 1;
     }
     if freq_hash.len() == 1 {
-        return card_rank::FIVE_KIND
+        return card_rank::FiveKind
     }
     else if freq_hash.len() == 2 {
         //fourkind or full house
         for key in freq_hash.keys() {
             if freq_hash[key] == 1 {
-                return card_rank::FOUR_KIND
+                return card_rank::FourKind
             }
             else if freq_hash[key] == 2 {
-                return card_rank::FULL_HOUSE
+                return card_rank::FullHouse
             }
         }
     }
     else if freq_hash.len() == 3 {
         for key in freq_hash.keys() {
             if freq_hash[key] == 3 {
-                return card_rank::THREE_KIND
+                return card_rank::ThreeKind
             }
             else if freq_hash[key] == 2 {
-                return card_rank::TWO_PAIR
+                return card_rank::TwoPair
             }
         }
     }
     else if freq_hash.len() == 4 {
-        return card_rank::ONE_PAIR
+        return card_rank::OnePair
     }
-    card_rank::HIGH_CARD
+    card_rank::HighCard
+}
+
+fn find_rank_joker(card_info: &str) -> card_rank {
+    let mut freq_hash: HashMap<char,u8> = HashMap::new();
+    let mut num_jokers = 0;
+    for each_char in card_info.chars() {
+        if each_char == 'J' {
+            num_jokers += 1;
+        } 
+        else {
+            let count = freq_hash.entry(each_char).or_insert(0);
+            *count += 1;
+        }
+    }
+    //edgecase
+    if freq_hash.len() == 0 {
+        freq_hash.insert('J',num_jokers);
+    }
+    //find key with max value in hash and add jokers to make it max 
+    let mut max_key: Option<char> = None;
+    let mut max_val: Option<u8> = None;
+
+    for (&key, &value) in freq_hash.iter() {
+        match max_val {
+            Some(max) if value > max => {
+                max_val = Some(value);
+                max_key = Some(key);
+            },
+            None => {
+                max_val = Some(value);
+                max_key = Some(key);
+            },
+            _ => {}
+        }
+    }
+    if let Some(k) = max_key {
+        if let Some(v) = max_val {
+            freq_hash.insert(k, v + num_jokers);
+        }
+    }
+    if freq_hash.len() == 1 {
+        return card_rank::FiveKind
+    }
+    else if freq_hash.len() == 2 {
+        //fourkind or full house
+        for key in freq_hash.keys() {
+            if freq_hash[key] == 1 {
+                return card_rank::FourKind
+            }
+            else if freq_hash[key] == 2 {
+                return card_rank::FullHouse
+            }
+        }
+    }
+    else if freq_hash.len() == 3 {
+        for key in freq_hash.keys() {
+            if freq_hash[key] == 3 {
+                return card_rank::ThreeKind
+            }
+            else if freq_hash[key] == 2 {
+                return card_rank::TwoPair
+            }
+        }
+    }
+    else if freq_hash.len() == 4 {
+        return card_rank::OnePair
+    }
+    card_rank::HighCard
 }
 
 
 fn solve_part1(card_bid_map: &Vec<(&str,u32)>,card_value: &HashMap<char,usize> ) {
-    //println!("{}",find_rank("AAAAB") as i32);
-    //find_rank("AAAAB");
     let mut ordered_hash: HashMap<i32,Vec<(&str,u32)>> = HashMap::new(); 
     let mut ans: u64 = 0;
     for &each_card in card_bid_map {
@@ -71,7 +137,7 @@ fn solve_part1(card_bid_map: &Vec<(&str,u32)>,card_value: &HashMap<char,usize> )
                     .push(each_card);
     }
     let mut rank = 0;
-    for each_enum in 0..7 {
+    for each_enum in 0..7 { //TODO : learn how to properly use enums here value is 7 so hardcoded
         if ordered_hash.contains_key(&each_enum) {
             // println!("{:?}",ordered_hash[&each_enum]);
             if ordered_hash[&each_enum].len() > 1 {
@@ -100,7 +166,44 @@ fn solve_part1(card_bid_map: &Vec<(&str,u32)>,card_value: &HashMap<char,usize> )
     println!("part 1 ans : {}",ans);
 }
 
-fn solve_part2(input_lines: &Vec<String>) {
+fn solve_part2(card_bid_map: &Vec<(&str,u32)>,card_value: &HashMap<char,usize> ) {
+    let mut ordered_hash: HashMap<i32,Vec<(&str,u32)>> = HashMap::new(); 
+    let mut ans: u64 = 0;
+    for &each_card in card_bid_map {
+        let each_card_rank: i32 = find_rank_joker(each_card.0) as i32 ;
+        //println!("rank of {} is {}",each_card.0,each_card_rank as i32);
+        ordered_hash.entry(each_card_rank)
+                    .or_insert_with(Vec::new)
+                    .push(each_card);
+    }
+    let mut rank = 0;
+    for each_enum in 0..7 { //TODO : learn how to properly use enums here value is 7 so hardcoded
+        if ordered_hash.contains_key(&each_enum) {
+            // println!("{:?}",ordered_hash[&each_enum]);
+            if ordered_hash[&each_enum].len() > 1 {
+                let mut card_strings: Vec<&str> = Vec::new(); 
+                let mut card_value_map: HashMap<&str,u32>= HashMap::new();
+                for each_ele in &ordered_hash[&each_enum]
+                {
+                    card_strings.push(each_ele.0);
+                    card_value_map.insert(each_ele.0,each_ele.1);
+                } 
+                //println!("{:?}",card_strings);
+                card_strings.sort_unstable_by(|a, b| compare_strings(a, b, &card_value));
+                //println!("{:?}",card_strings);
+                for &each_ele in card_strings.iter().rev() {
+                    rank += 1;
+                    ans += card_value_map[each_ele] as u64 * rank as u64 ;
+                }
+            }
+            else {
+                rank += 1;
+                ans += ordered_hash[&each_enum][0].1 as u64 * rank as u64;
+            }
+            
+        }
+    }
+    println!("part 2 ans : {}",ans);
 }
 
 fn compare_strings(a: &str, b: &str, order: &HashMap<char, usize>) -> Ordering {
@@ -147,5 +250,20 @@ pub fn solve() {
     }
     //println!("{:?}",card_bid_map);
     solve_part1(&card_bid_map,&card_value);
-    solve_part2(&input_lines);
+
+    let card_value_joker: HashMap<char,usize> = HashMap::from([
+        ('J',12),
+        ('2',11),
+        ('3',10),
+        ('4',9),
+        ('5',8),
+        ('6',7),
+        ('7',6),
+        ('8',5),
+        ('9',4),
+        ('T',3),
+        ('Q',2),
+        ('K',1),
+        ('A',0)]);
+    solve_part2(&card_bid_map,&card_value_joker);
 }
