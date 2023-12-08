@@ -1,5 +1,5 @@
 use std::fs;
-
+use std::collections::HashMap;
 fn read_input(filename: &str) -> String {
     fs::read_to_string(filename).expect("Error reading file")
 }
