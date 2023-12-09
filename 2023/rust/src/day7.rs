@@ -207,6 +207,7 @@ fn solve_part2(card_bid_map: &Vec<(&str,u32)>,card_value: &HashMap<char,usize> )
 }
 
 fn compare_strings(a: &str, b: &str, order: &HashMap<char, usize>) -> Ordering {
+    //custom compare -> stolen from interwebs 
     let mut a_chars = a.chars();
     let mut b_chars = b.chars();
 
