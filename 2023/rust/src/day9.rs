@@ -30,11 +30,9 @@ fn solve_part(sensor_val_arr: &Vec<Vec<i64>>) {
             }
         }
         println!("{:?}",sensor_diff_arr);
-        for each_ele in &sensor_diff_arr {
-            predicted_val += each_ele.last().unwrap(); 
-        }
         for each_ele in sensor_diff_arr.iter().rev() {
             predicted_prev_val = each_ele[0]-predicted_prev_val;
+            predicted_val += each_ele.last().unwrap(); 
         }
         println!("predicted val {}",predicted_val);
         println!("predicted prev val {}",predicted_prev_val);
