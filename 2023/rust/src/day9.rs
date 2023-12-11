@@ -22,7 +22,7 @@ fn solve_part(sensor_val_arr: &Vec<Vec<i64>>) {
             let mut next_diff_arr: Vec<i64> = Vec::new(); 
             let last_arr = sensor_diff_arr.last().unwrap().clone() ; 
             for i in 0..last_arr.len()-1 {
-                next_diff_arr.push((last_arr[i+1]-last_arr[i]));
+                next_diff_arr.push(last_arr[i+1]-last_arr[i]);
             }
             sensor_diff_arr.push(next_diff_arr.clone());
             if next_diff_arr.iter().all(|&x| x == 0) {
