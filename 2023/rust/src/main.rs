@@ -12,6 +12,7 @@ mod day9;
 mod day10;
 mod day11;
 mod day13;
+mod day14;
 mod day15;
 
 fn main() {
@@ -34,6 +35,7 @@ fn main() {
         "10" => day10::solve(),
         "11" => day11::solve(),
         "13" => day13::solve(),
+        "14" => day14::solve(),
         "15" => day15::solve(),
         _=>println!("day {} not implemented",args[1].as_str()),
     }
