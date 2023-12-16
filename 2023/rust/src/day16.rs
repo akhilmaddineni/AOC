@@ -41,42 +41,95 @@ impl Point {
     }
 }
 
-fn solve_part1(matrix: &Vec<Vec<char>>) {
+fn get_num_active(matrix: &Vec<Vec<char>>,matrix_store: &Vec<Vec<(bool,Vec<Direction>)>>,start_point: Point, direction: Direction) -> u64 {
     let mut ans: u64 = 0;
+    let mut matrix_seen = matrix_store.clone(); 
     let mut beam_queue: VecDeque<(Point,Direction)> = VecDeque::new();
-    let mut matrix_seen: Vec<Vec<(bool,Vec<Direction>)>> = Vec::new(); 
-    //fill matrix seen 
-    for i in 0..matrix.len(){
-        let mut temp_matrix_row: Vec<(bool,Vec<Direction>)> = Vec::new(); 
-        for j in 0..matrix[0].len(){
-            let mut direction: Vec<Direction> = Vec::new(); 
-            temp_matrix_row.push((false,direction));
-        }
-        matrix_seen.push(temp_matrix_row);
-    }
 
-    //start beam at top left , direction right
-    
-    matrix_seen[0][0].0 = true;
-    if matrix[0][0] == '.' || matrix[0][0] == '-'{
-        matrix_seen[0][0].1.push(Direction::Right);
-        beam_queue.push_back((Point {x:0,y:0},Direction::Right));
-    }
-    else if matrix[0][0] == '\\' || matrix[0][0] == '|' {
-        matrix_seen[0][0].1.push(Direction::Down);
-        beam_queue.push_back((Point {x:0,y:0},Direction::Down));
-    }
-    
-    println!("{:?}",beam_queue);
-    //println!("{:?}",matrix_seen);
     let row_len = matrix.len(); 
     let col_len = matrix[0].len();
 
+    //finding inital direction 
+    matrix_seen[start_point.x][start_point.y].0 = true;
+    if (matrix[start_point.x][start_point.y] == '.' || matrix[start_point.x][start_point.y]== '-' ) && direction == Direction::Right {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Right);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Right));
+    }
+    else if matrix[start_point.x][start_point.y] == '\\' && direction == Direction::Right {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Down);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Down));
+    }
+    else if matrix[start_point.x][start_point.y] == '/' && direction == Direction::Right {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Up);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Up));
+    }
+    else if matrix[start_point.x][start_point.y] == '|' && direction == Direction::Right {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Up);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Up));
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Down);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Down));
+    }
+    else if (matrix[start_point.x][start_point.y] == '.' || matrix[start_point.x][start_point.y]== '-' ) && direction == Direction::Left {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Left);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Left));
+    }
+    else if matrix[start_point.x][start_point.y] == '|'&& direction == Direction::Left {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Up);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Up));
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Down);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Down));
+    }
+    else if matrix[start_point.x][start_point.y] == '/'&& direction == Direction::Left {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Down);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Down));
+    }
+    else if matrix[start_point.x][start_point.y] == '\\'&& direction == Direction::Left {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Up);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y}, Direction::Up));
+    }
+    else if (matrix[start_point.x][start_point.y] == '.' || matrix[start_point.x][start_point.y]== '|' ) && direction == Direction::Up {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Up);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Up));
+    }
+    else if matrix[start_point.x][start_point.y] == '/' && direction == Direction::Up {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Right);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Right));
+    }
+    else if matrix[start_point.x][start_point.y] == '\\' && direction == Direction::Up {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Left);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Left));
+    }
+    else if matrix[start_point.x][start_point.y] == '-' && direction == Direction::Up {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Left);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Left));
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Right);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Right));
+    }
+    else if (matrix[start_point.x][start_point.y] == '.' || matrix[start_point.x][start_point.y]== '|' ) && direction == Direction::Down {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Down);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Down));
+    }
+    else if matrix[start_point.x][start_point.y] == '/' && direction == Direction::Down {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Left);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Left));
+    }
+    else if matrix[start_point.x][start_point.y] == '\\' && direction == Direction::Down {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Right);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Right));
+    }
+    else if matrix[start_point.x][start_point.y] == '-' && direction == Direction::Down {
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Left);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Left));
+        matrix_seen[start_point.x][start_point.y].1.push(Direction::Right);
+        beam_queue.push_back((Point {x:start_point.x,y:start_point.y},Direction::Right));
+    }
+
+    //process queue until empty 
     while beam_queue.len() > 0 {
         let mut cur_point: Point ; 
         let mut cur_direction: Direction;
         (cur_point,cur_direction)=beam_queue.pop_back().unwrap();
-        println!("{:?}{:?}",cur_point,cur_direction);
+        //println!("{:?}{:?}",cur_point,cur_direction);
         if cur_point.is_valid_move(cur_direction,row_len,col_len){
             cur_point.move_in_direction(cur_direction); 
             if cur_point.x >=0 && cur_point.x<row_len && cur_point.y>=0 && cur_point.y<col_len {
@@ -194,17 +247,54 @@ fn solve_part1(matrix: &Vec<Vec<char>>) {
             }
         }
     }
-    // for ele in matrix_seen {
-    //     println!("");
-    //     for each_one in ele {
-    //         print!("{} ",each_one.0);
-    //     }
-    // }
+    ans
+}
+
+fn solve_part1(matrix: &Vec<Vec<char>>) {
+    let mut ans: u64 = 0;
+    
+    let mut matrix_seen: Vec<Vec<(bool,Vec<Direction>)>> = Vec::new(); 
+    //fill matrix seen 
+    for i in 0..matrix.len(){
+        let mut temp_matrix_row: Vec<(bool,Vec<Direction>)> = Vec::new(); 
+        for j in 0..matrix[0].len(){
+            let mut direction: Vec<Direction> = Vec::new(); 
+            temp_matrix_row.push((false,direction));
+        }
+        matrix_seen.push(temp_matrix_row);
+    }
+    ans = get_num_active(&matrix,&matrix_seen,Point{x:0,y:0},Direction::Right);
     
     println!("Part 1 ans : {}",ans);
 }
 
-fn solve_part2(matrix_input: &Vec<Vec<char>>){
+fn solve_part2(matrix: &Vec<Vec<char>>){
+    let mut ans: u64 = 0;
+    
+    let mut matrix_seen: Vec<Vec<(bool,Vec<Direction>)>> = Vec::new(); 
+    //fill matrix seen 
+    for i in 0..matrix.len(){
+        let mut temp_matrix_row: Vec<(bool,Vec<Direction>)> = Vec::new(); 
+        for j in 0..matrix[0].len(){
+            let mut direction: Vec<Direction> = Vec::new(); 
+            temp_matrix_row.push((false,direction));
+        }
+        matrix_seen.push(temp_matrix_row);
+    }
+
+    //first and last cols 
+    for i in 0..matrix.len(){
+        ans = ans.max(get_num_active(&matrix,&matrix_seen,Point{x:i,y:0},Direction::Right));
+        ans = ans.max(get_num_active(&matrix,&matrix_seen,Point{x:i,y:matrix[0].len()-1},Direction::Left));
+    }
+
+    //first and last rows 
+    for j in 0..matrix[0].len() {
+        ans = ans.max(get_num_active(&matrix,&matrix_seen,Point{x:0,y:j},Direction::Down));
+        ans = ans.max(get_num_active(&matrix,&matrix_seen,Point{x:matrix.len()-1,y:j},Direction::Up));
+    }
+    
+    println!("Part 2 ans : {}",ans);
 
 }
 pub fn solve() {
