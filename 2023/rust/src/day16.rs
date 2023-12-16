@@ -127,12 +127,12 @@ fn get_num_active(matrix: &Vec<Vec<char>>,matrix_store: &Vec<Vec<(bool,Vec<Direc
     //process queue until empty 
     while beam_queue.len() > 0 {
         let mut cur_point: Point ; 
-        let mut cur_direction: Direction;
+        let cur_direction: Direction;
         (cur_point,cur_direction)=beam_queue.pop_back().unwrap();
         //println!("{:?}{:?}",cur_point,cur_direction);
         if cur_point.is_valid_move(cur_direction,row_len,col_len){
             cur_point.move_in_direction(cur_direction); 
-            if cur_point.x >=0 && cur_point.x<row_len && cur_point.y>=0 && cur_point.y<col_len {
+            if cur_point.x<row_len && cur_point.y<col_len {
                 if matrix[cur_point.x][cur_point.y] == '.' {
                     matrix_seen[cur_point.x][cur_point.y].0 = true;
                     if !matrix_seen[cur_point.x][cur_point.y].1.contains(&cur_direction) {
@@ -251,14 +251,14 @@ fn get_num_active(matrix: &Vec<Vec<char>>,matrix_store: &Vec<Vec<(bool,Vec<Direc
 }
 
 fn solve_part1(matrix: &Vec<Vec<char>>) {
-    let mut ans: u64 = 0;
+    let ans: u64;
     
     let mut matrix_seen: Vec<Vec<(bool,Vec<Direction>)>> = Vec::new(); 
     //fill matrix seen 
-    for i in 0..matrix.len(){
+    for _i in 0..matrix.len(){
         let mut temp_matrix_row: Vec<(bool,Vec<Direction>)> = Vec::new(); 
-        for j in 0..matrix[0].len(){
-            let mut direction: Vec<Direction> = Vec::new(); 
+        for _j in 0..matrix[0].len(){
+            let direction: Vec<Direction> = Vec::new(); 
             temp_matrix_row.push((false,direction));
         }
         matrix_seen.push(temp_matrix_row);
@@ -273,10 +273,10 @@ fn solve_part2(matrix: &Vec<Vec<char>>){
     
     let mut matrix_seen: Vec<Vec<(bool,Vec<Direction>)>> = Vec::new(); 
     //fill matrix seen 
-    for i in 0..matrix.len(){
+    for _i in 0..matrix.len(){
         let mut temp_matrix_row: Vec<(bool,Vec<Direction>)> = Vec::new(); 
-        for j in 0..matrix[0].len(){
-            let mut direction: Vec<Direction> = Vec::new(); 
+        for _j in 0..matrix[0].len(){
+            let direction: Vec<Direction> = Vec::new(); 
             temp_matrix_row.push((false,direction));
         }
         matrix_seen.push(temp_matrix_row);
