@@ -46,27 +46,55 @@ S is the starting position of the animal; there is a pipe on this tile, but your
 
 fn valid_directions(letter: char) -> Vec<(isize,isize)> {
     if letter == 'S' {
-        return vec![(-1,0),(1,0),(0,1),(0,-1)]
+        return vec![(-1,0),(0,1),(1,0),(0,-1)]
     }
     else if letter == 'F' {
         return vec![(0,1),(1,0)]
     }
     else if letter == '7' {
-        return vec![(0,-1),(1,0)]
+        return vec![(1,0),(0,-1)]
     }
     else if letter == 'J' {
-        return vec![(0,-1),(-1,0)]
+        return vec![(-1,0),(0,-1)]
     }
     else if letter == 'L' {
-        return vec![(0,1),(-1,0)]
+        return vec![(-1,0),(0,1)]
     }
     else if letter == '-' {
-        return vec![(0,-1),(0,1)]
+        return vec![(0,1),(0,-1)]
     }
     else if letter == '|' {
-        return vec![(1,0),(-1,0)]
+        return vec![(-1,0),(1,0)]
     }
     Vec::new()
+}
+
+fn valid_move(point: (isize,isize), letter: char)->bool {
+    if letter == 'S' {
+        return true;
+    }
+    else if letter == '.'{
+        return false;
+    }
+    else if letter == '|' && (point == (-1,0) || point == (1,0)) {
+        return true;
+    }
+    else if letter == '-' && (point == (0,-1) || point == (0,1)) {
+        return true;
+    }
+    else if letter == 'L' && (point == (1,0) || point == (0,-1)) {
+        return true;
+    }
+    else if letter == 'J' && (point == (1,0) || point == (0,1)) {
+        return true;
+    }
+    else if letter == '7' && (point == (-1,0) || point == (0,1)) {
+        return true;
+    }
+    else if letter == 'F' && (point == (0,-1) || point == (-1,0)) {
+        return true;
+    }
+    false
 }
 
 fn farthest_distance(matrix: Vec<Vec<char>>) -> isize {
@@ -98,35 +126,27 @@ fn farthest_distance(matrix: Vec<Vec<char>>) -> isize {
     let mut visited = HashMap::new(); 
     queue.push_back((start_point,0));
     visited.insert(start_point,0);
+    let mut last_point: Point = start_point;
 
     //let directions = [("north",-1,0),("south",1,0),("east",0,1),("west",0,-1)] ; 
     while let Some((point, dist)) = queue.pop_front() {
-        max_distance = max_distance.max(dist) ; 
-        // println!("processing : {:?} {}",point,matrix[point.x as usize][point.y as usize]);
-        // println!("visited : {:?}",visited);
-        // println!("pending queue : {:?}",queue);
+        println!("processing : {:?} {} dist {}",point,matrix[point.x as usize][point.y as usize],dist);
 
         for &(dx, dy) in &valid_directions(matrix[point.x as usize][point.y as usize]) {
             let new_x = point.x + dx;
             let new_y = point.y + dy;
             if new_x >= 0 && new_x < rows && new_y >= 0 && new_y < cols {
                 let new_point = Point { x: new_x, y: new_y };
-                // if matrix[new_x as usize][new_y as usize] == 'S' {
-                //     return dist+1
-                // }
-                if !visited.contains_key(&new_point) {
+                if !visited.contains_key(&new_point) && valid_move((dx, dy),matrix[new_x as usize][new_y as usize]) {
                     visited.insert(new_point,dist+1); // Mark as visited when enqueued
                     //println!("valid path");
                     queue.push_back((new_point, dist + 1));
-                }
-                else if visited.get(&new_point).unwrap() < &(dist+1) {
-                    visited.insert(new_point,dist+1); // Mark as visited when enqueued
-                    //println!("valid path");
-                    queue.push_back((new_point, dist + 1));
+                    last_point = new_point;
                 }
             }
         }
     }
+    max_distance = *visited.get(&last_point).unwrap();
     max_distance
 }
 
@@ -141,5 +161,5 @@ pub fn solve() {
         matrix.push(input_lines[i].chars().collect::<Vec<_>>().clone());
     }
 
-    println!("Farthest distance: {}", farthest_distance(matrix)/2);
+    println!("Farthest distance: {}", farthest_distance(matrix));
 }
