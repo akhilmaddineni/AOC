@@ -21,7 +21,7 @@ fn solve_part1(input_lines: &Vec<String>) {
         }
         println!("{:?}",char_array);
         println!("{:?}",seq);
-        ans += solve(&char_array,&seq,0,0);
+        //ans += solve(&char_array,&seq,0,0);
     }
     
 
