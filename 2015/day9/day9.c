@@ -13,7 +13,7 @@ int main()
 
     while(fgets(line,sizeof(line),fp))
     {
-        //TODO
+        
     }
 
 }
