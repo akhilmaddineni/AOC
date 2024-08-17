@@ -12,11 +12,12 @@ for line in lines :
     
     if point[0][0] == point[1][0] or point[0][1] == point[1][1] :
         points.append(point)
+    #this is for part2
     else : 
         slope  = (point[0][1]-point[1][1])//(point[0][0]-point[1][0])
         if slope == 1 or slope == -1 : 
             points.append(point)
-print(points)
+#print(points)
 
 arr = []
 for i in range(max_x+1):
