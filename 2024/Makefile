@@ -3,7 +3,7 @@ CC = clang
 CFLAGS = -Wall -Wextra -O2
 
 # Define all days and common files
-DAYS = day01 day02
+DAYS = day01
 COMMON_SRC = common/utils.c
 COMMON_OBJS = $(COMMON_SRC:.c=.o)
 
