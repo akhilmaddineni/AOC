@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = clang
-CFLAGS = -Wall -Wextra -O2
+CFLAGS = -Wall -Wextra -O2 -Icommon $(shell pkg-config --cflags glib-2.0)
+LDFLAGS = $(shell pkg-config --libs glib-2.0)
 
 # Define all days and common files
 DAYS = day01
@@ -12,7 +13,7 @@ all: $(DAYS)
 
 # Use a different name for the output executable (e.g., `day01.out`)
 $(DAYS): %: %/main.o $(COMMON_OBJS)
-	$(CC) $(CFLAGS) $^ -o $@.out
+	$(CC) $(CFLAGS) $^ -o $@.out $(LDFLAGS)
 
 # Rule for compiling common files
 $(COMMON_OBJS): %.o: %.c

@@ -69,3 +69,53 @@ void free_string_array(char** array, int count) {
     }
     free(array);
 }
+
+char** split_by_space(const char* str, int* count) {
+    if (!str || !count) return NULL;
+
+    // Copy the input string to avoid modifying the original
+    char* copy = strdup(str);
+    if (!copy) return NULL;
+
+    // Initialize token count and allocate space for pointers
+    *count = 0;
+    int capacity = 10; // Start with space for 10 tokens
+    char** tokens = (char**)malloc(capacity * sizeof(char*));
+    if (!tokens) {
+        free(copy);
+        return NULL;
+    }
+
+    // Tokenize the string
+    char* token = strtok(copy, " ");
+    while (token) {
+        // Resize if necessary
+        if (*count >= capacity) {
+            capacity *= 2;
+            char** new_tokens = (char**)realloc(tokens, capacity * sizeof(char*));
+            if (!new_tokens) {
+                free(copy);
+                free(tokens);
+                return NULL;
+            }
+            tokens = new_tokens;
+        }
+
+        // Add the token to the array
+        tokens[*count] = strdup(token);
+        (*count)++;
+        token = strtok(NULL, " ");
+    }
+
+    free(copy);
+    return tokens;
+}
+
+int compare_asc(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int compare_desc(const void* a, const void* b) {
+    return (*(int*)b - *(int*)a);
+}
+
