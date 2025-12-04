@@ -1,4 +1,17 @@
+def problem2(arr, num_selected):
+    n = len(arr)
+    dp = [[-1]*(num_selected+1) for _ in range(n+1)]
+    for i in range(n+1):
+        dp[i][0] = 0
+    for i in range(1, n+1):
+        for j in range(1, min(i, num_selected)+1):
+            dp[i][j] = max(dp[i-1][j], dp[i-1][j-1]*10 + arr[i-1])
+    return dp[n][num_selected]
+
+
+
 ans = 0 
+ans2=0
 with open("input.txt") as f:
     for line in f:
         int_num = [int(x) for x in line.rstrip()]
@@ -16,4 +29,6 @@ with open("input.txt") as f:
             #     break
         #print(cur_max)
         ans += cur_max
+        ans2 += problem2(int_num, 12)
 print(ans)
+print(ans2)
